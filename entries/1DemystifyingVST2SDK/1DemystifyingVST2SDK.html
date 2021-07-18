@@ -645,15 +645,15 @@ following block sets the function pointer variables for the function
 declarations above </font><font color="#468a1a">so the host can call
 them.</font></font></font></font></p>
 <p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;dispatcher
-= &amp;dispatcherProc;</span></span></font></font></font></p>
+= dispatcherProc;</span></span></font></font></font></p>
 <p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;setParameter
-= &amp;setParameterProc;</span></span></font></font></font></p>
+= setParameterProc;</span></span></font></font></font></p>
 <p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;getParameter
-= &amp;getParameterProc;</span></span></font></font></font></p>
+= getParameterProc;</span></span></font></font></font></p>
 <p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;processReplacing
-= &amp;processProc;</span></span></font></font></font></p>
+= processProc;</span></span></font></font></font></p>
 <p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;processDoubleReplacing
-= &amp;processDoubleProc;</span></span></font></font></font></p>
+= processDoubleProc;</span></span></font></font></font></p>
 <p style="margin-bottom: 0in; line-height: 175%">
 
 </p>
@@ -681,13 +681,9 @@ flags here</span></span></font></font></font></p>
 <p style="margin-bottom: 0in; line-height: 175%">
 
 </p>
-<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		<font color="#468a1a">//</font><font color="#468a1a">These
-can be NULL</font></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		<font color="#468a1a">//</font><font color="#468a1a">this references the AEffect instance thats given in the callback functions</font></font></font></font></p>
 <p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">		</font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;object
-= </span></span></font></font></font><font color="#6f008a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">NULL</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">;</font></font></font></p>
-<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">		</font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;user
-= </span></span></font></font></font><font color="#6f008a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">NULL</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">;</font></font></font></p>
-<p style="margin-bottom: 0in; line-height: 175%">
+= </span></span></font></font></font><font color="#6f008a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">effectInstance</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">;</font></font></font></p>
 
 </p>
 <p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">		</font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;uniqueID
