@@ -1,0 +1,768 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<link rel="stylesheet" href="../../style.css">
+	<meta http-equiv="content-type" content="text/html; charset=windows-1252"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 7.1.2.2 (Windows)"/>
+	<meta name="created" content="2021-07-17T17:30:39.626000000"/>
+	<meta name="changed" content="2021-07-17T20:47:45.519000000"/>
+	<style type="text/css">
+		a:link { color: #000080; so-language: zxx; text-decoration: underline }
+		a:visited { color: #800000; so-language: zxx; text-decoration: underline }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><p style="margin-bottom: 0in; line-height: 175%">
+<font style="font-size: 15pt"><a href="../../index.html">Woo_Ramblign</a></font>
+<br/><br/><br/>
+<font size="3" style="font-size: 13pt"><b>Demystifying the VST2 SDK</b></font></p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt">July 17 2021</font></p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt">If you&rsquo;re not familiar
+with the VST2 SDK (not the VST3 SDK), then you would be forgiven for
+thinking that most of the files in the source tree are the
+bare-minimum requirement for building a VST plugin. After all, the
+example plugins wouldn&rsquo;t compile without these files, right?
+You&rsquo;ll need even more files supplied by the SDK if you want a
+custom GUI for your plugin. All in all, it seems that the VST2 format is
+very complected and has a lot of moving parts- but actually, this
+couldn&rsquo;t be farther from the truth.</font></p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt">In fact, the VST2 SDK at its
+very core is <span style="font-style: normal">only</span><i> a single</i><span style="font-style: normal">
+header file. You could compile a </span><i>working</i><span style="font-style: normal">
+plugin with </span><span style="font-style: normal">two files: </span><span style="font-style: normal">one
+source file and one header file, and that&rsquo;s what I&rsquo;ll
+show you how to do.</span></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt"><span style="font-style: normal">First,
+download the VST2 SDK: <a href="https://archive.org/details/VST2SDK">https://archive.org/details/VST2SDK</a></span></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt">Steinberg&rsquo;s VST3 SDK has
+some old VST2 source files, but it doesn&rsquo;t have the necessary
+header files described here, so you&rsquo;ll have to download an
+archived version of the original VST2 sdk (linked above).</font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt"><span style="font-style: normal">The
+header file you&rsquo;ll ne</span><font face="Liberation Serif, serif"><span style="font-style: normal">ed
+is </span></font><font face="Liberation Mono, monospace"><span style="font-style: normal"><span style="text-decoration: none"><span style="background: #ffffa6">aeffect.h</span></span></span></font><font face="Liberation Serif, serif"><span style="font-style: normal">
+</span></font><font face="Liberation Serif, serif"><span style="font-style: normal">which
+can be found in pluginterfaces\vst2.x. In the same folder there is
+another header file you might notice, </span></font><font face="Liberation Mono, monospace"><span style="font-style: normal"><span style="background: #ffffa6">aeffectx.h</span></span></font><font face="Liberation Serif, serif"><span style="font-style: normal">,
+which can be </span></font><font face="Liberation Serif, serif"><span style="font-style: normal">(and
+should be) </span></font><font face="Liberation Serif, serif"><span style="font-style: normal">used
+with </span></font><font face="Liberation Mono, monospace"><span style="font-style: normal"><span style="text-decoration: none"><span style="background: #ffffa6">aeffect.h</span></span></span></font><font face="Liberation Serif, serif"><span style="font-style: normal"><span style="text-decoration: none"><span style="background: transparent">
+</span></span></span></font><font face="Liberation Serif, serif"><span style="font-style: normal"><span style="text-decoration: none"><span style="background: transparent">to
+give you all the functionality you&rsquo;ll need without all the SDK
+bloat.  I&rsquo;ll only use </span></span></span></font><font face="Liberation Mono, monospace"><span style="font-style: normal"><span style="text-decoration: none"><span style="background: #ffffa6">aeffect.h</span></span></span></font><font face="Liberation Serif, serif"><span style="font-style: normal"><span style="text-decoration: none"><span style="background: transparent">
+</span></span></span></font><font face="Liberation Serif, serif"><span style="font-style: normal"><span style="text-decoration: none"><span style="background: transparent">for
+now.</span></span></span></font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%; text-decoration: none">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%; text-decoration: none">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt"><span style="background: transparent">You
+can use any IDE or build system you want. As long as you build a
+shared library (DLL on windows) you&rsquo;ll end up with a VST
+plugin. I&rsquo;ll just use Visual Studio, the de facto c++ IDE for
+demonstrating stuff like this it seems.</span></font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%; text-decoration: none">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%; text-decoration: none">
+
+
+</p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt">STEP 1:</font></p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt">	Start an empty project.</font></p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt">	</font><img src="1DemystifyingVST2SDK_html_80fdd786e42e1ab4.png" name="Image1" align="left" width="683" height="446">
+  <br clear="left"/>
+</img>
+</p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt">STEP 2:</font></p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt">	Put<font face="Liberation Serif, serif"><span style="font-style: normal">
+</span></font><font face="Liberation Mono, monospace"><span style="font-style: normal"><span style="text-decoration: none"><span style="background: #ffffa6">aeffect.h</span></span></span></font><font face="Liberation Serif, serif"><span style="font-style: normal">
+</span></font><font face="Liberation Serif, serif"><span style="font-style: normal">in
+the project, and create a source file too.</span></font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt">	</font><img src="1DemystifyingVST2SDK_html_4c803fbddc1112c0.png" name="Image2" align="left" width="287" height="194">
+  <br clear="left"/>
+</img>
+</p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt">STEP 3:</font></p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt">	That's it (for now).</font></p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-weight: normal; line-height: 175%">
+<font size="3" style="font-size: 13pt">So what&rsquo;s the magic
+behind <font face="Liberation Mono, monospace"><span style="font-style: normal"><span style="text-decoration: none"><span style="background: #ffffa6">aeffect.h</span></span></span></font><font face="Liberation Serif, serif"><span style="font-style: normal">
+</span></font><font face="Liberation Serif, serif"><span style="font-style: normal">that
+can turn anything into a plugin? Well, it&rsquo;s simply a set of
+structs, enums, and functions that a DAW </span></font><font face="Liberation Serif, serif"><span style="font-style: normal">recognizes in order to</span></font><font face="Liberation Serif, serif"><span style="font-style: normal">
+to be the &ldquo;host&rdquo; of a plugin. The term &ldquo;host&rdquo; is used
+</span></font><font face="Liberation Serif, serif"><span style="font-style: normal">to
+describe </span></font><font face="Liberation Serif, serif"><span style="font-style: normal">what
+</span></font><font face="Liberation Serif, serif"><span style="font-style: normal">environment</span></font><font face="Liberation Serif, serif"><span style="font-style: normal">
+the plugin is running in (usually a DAW), </span></font><font face="Liberation Serif, serif"><span style="font-style: normal">so
+if you open Serum in FL studio, then you could say Serum is the
+plugin and FL Studio is the host</span></font><font face="Liberation Serif, serif"><span style="font-style: normal">.</span></font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">The
+most important function is probably the &ldquo;entry point&rdquo;
+which is the function that your DAW recognizes and uses to load the VST
+plugin:</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; line-height: 175%"><font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt"><b>AEffect
+*VSTPluginMain(audioMasterCallback vstHostCallback);</b></font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+ <b>AEffect</b> is a struct defined in
+<font face="Liberation Mono, monospace"><span style="text-decoration: none"><span style="background: #ffffa6">aeffect.h</span></span></font>
+that represents your plugin. It isn&rsquo;t quite the plugin itself,
+your plugin might have processing or GUI functions that operate
+entirely independently of AEffect. In a sense, you can think of it as
+a buffer for data shared between your plugin and the host.
+<b>VSTPluginMain</b> returns a pointer to an AEffect, but the host is
+the one who calls <b>VSTPluginMain</b> in the first place, so maybe
+you can see where things are going:</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">You
+have to create an instance of <b>AEffect</b> yourself and return a
+pointer to it via <b>VSTPluginMain</b>.</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">The
+<b>vstHostCallback</b> parameter of type <b>audioMasterCallback </b>is a function pointer
+that you should save somewhere; it&rsquo;s one of the ways you can
+interact with the host.</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">The
+specifics of this are described later.</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">Let&rsquo;s
+examine the <font face="Liberation Mono, monospace"><span style="text-decoration: none"><span style="background: #ffffa6">aeffect.h</span></span></font>
+file itself&hellip;</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">The
+top is entirely made up of processor definitions:</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<img src="1DemystifyingVST2SDK_html_19d77ff7c4b9a5e8.png" name="Image3" align="left" width="706" height="757">
+  <br clear="left"/>
+</img>
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">For
+the most part you can ignore them. They deal with deprecation,
+version control, and platform stuff (struct packing).</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">After
+the defines are some typedefs:</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<img src="1DemystifyingVST2SDK_html_fada1b16b1fab541.png" name="Image4" align="left" width="1010" height="560">
+  <br clear="left"/>
+</img>
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">The
+typedefs at the top and middle are mostly self-explanatory; they are
+standard types that the VST2 format is putting under a custom name
+and adapting per platform. However, the complexity goes from low to
+high once we reach the bottom. First you can see that the AEffect
+struct is being declared so it can be used in the types below it. The
+final types at the bottom are   all function pointers. We already
+dealt with the first one above, <b>audioMasterCallback</b>, in
+<b>VSTPluginMain</b><b>. </b>While <b>audioMasterCallback</b> is
+supplied by the host, all the remaining function pointers are for
+functions that you as the plugin developer have to supply. Here&rsquo;s
+what each does (from bottom to top):</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">	<b>AEffectGetParameterProc</b>
+&ndash; The host calls this to get the value of a parameter in your
+plugin.</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">	<b>AEffectSetParameterProc</b>
+&ndash; The host calls this when it wants to set a parameter in your
+plugin.</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">	<b>AEffectProcessDoubleProc
+&ndash; </b>This function is called by the host, and it gives you
+arrays of input samples that you modify and write to arrays for
+output samples. This is where the audio processing happens.</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">	<b>AEffectProcessProc
+&ndash; </b>This function is the same as the previous one, except it
+operates on the <b>float</b> data type rather than <b>double</b>.</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">	<b>AEffectDispatcherProc</b>
+&ndash; This is a general-purpose function for the host to send
+information to your plugin. You use the <b>opcode</b> argument to
+determine what the host is trying to tell your plugin, and the
+remaining parameters depend on the information being sent.</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">	<b>audioMasterCallback</b>
+&ndash; This is a function pointer for the <b>plugin </b>to call
+rather than the host. It&rsquo;s similar to  <b>AEffectDispatcherProc</b>,
+except its for you to send information to the host rather than the
+other way around.</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">Following
+the typedefs are the implementation for <b>AEffect</b> and some more
+defines:</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<img src="1DemystifyingVST2SDK_html_56e5582714f8463e.png" name="Image5" align="left" width="1016" height="799">
+  <br clear="left"/>
+</img>
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">The
+defines are for setting the <b>magic</b> variable in <b>AEffect</b>.
+You just set it to <b>kEffectMagic </b>when you create an instance of
+<b>AEffect</b>. The magic going on there is the fact that the host
+checks to make sure that <b>magic</b> is formatted as expected to
+determine if the VST file is corrupted, or if the file is even a VST
+plugin in the first place (after all, there <i>are </i>other types of
+DLLs out there).</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">The
+remaining members of the <b>AEffect</b> struct are:</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">	variables
+for actually storing the function pointers we talked about earlier,</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">	variables
+for storing plugin-related data (programs, params, numInputs, etc),</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">	reserved
+variables (they will never be used).</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">The
+numInputs and numOutputs variables are for storing how many <i>audio</i>
+inputs or outputs your plugin has: effects usually have 2 inputs and
+2 outputs, Synths don&rsquo;t need any inputs, etc. I believe that
+synths can have inputs that just remain unused, so it might be
+reasonable to just set both variables to 2 for any plugin. The two
+inputs/outputs correspond to the left and right audio channels.</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">Following
+the <b>AEffect</b> struct definition are flags that can be used for
+the <b>flags </b>variable:</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<img src="1DemystifyingVST2SDK_html_bc91afd7797eff76.png" name="Image6" align="left" width="910" height="321">
+  <br clear="left"/>
+</img>
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">And
+<i>that</i> is followed by the opcodes used in <b>AEffectDispatcherProc</b>
+which are too details to get into here (and commented well enough to
+not need much explanation)<b>:</b></font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+ <img src="1DemystifyingVST2SDK_html_ba1e3b4b2e1cac7a.png" name="Image7" align="left" width="1002" height="591">
+  <br clear="left"/>
+</img>
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">Which
+is in turn followed by opcodes for <b>audioMasterCallback </b>and
+some constants for strings:</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+ <img src="1DemystifyingVST2SDK_html_9fa6a05186be4b6d.png" name="Image8" align="left" width="1006" height="371">
+  <br clear="left"/>
+</img>
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">The
+remaining part of the file...</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+ <img src="1DemystifyingVST2SDK_html_5d02d3e1e7f03bbc.png" name="Image9" align="left" width="999" height="796">
+  <br clear="left"/>
+</img>
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">Just
+consists of inline string manipulation functions, casting functions,
+and the <b>ERect</b> struct which is used when your plugin has a
+custom GUI.</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">So
+while <font face="Liberation Mono, monospace"><span style="text-decoration: none"><span style="background: #ffffa6">aeffect.h</span></span></font>
+certainly isn&rsquo;t a <i>small</i> header file, there is still a
+very little amount of stuff going on compared to the whole VST2 SDK.
+The file itself can be summarized as:</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">	Unimportant
+preprocessor stuff,</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">	function
+pointer typedefs (and normal typedefs),</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">	AEffect,</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">	enums
+for various things,</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">	extra
+functions that aren&rsquo;t really needed.</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">This
+file is all you need for a bare-minimum VST2 plugin. Let&rsquo;s go
+back to visual studio&hellip;</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">You&rsquo;ll
+have to change the project properties to build a DLL. Right click
+project &gt; properties &gt; Configuration Properties &gt; General &gt;
+Configuration Type = DLL</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">Also
+make sure ALL CONFIGURATIONS and ALL PLATFORMS are selected for
+configuration and platform above, or else the settings won&rsquo;t
+apply to all configurations.</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<img src="1DemystifyingVST2SDK_html_e94fd185faa01958.png" name="Image10" align="left" width="1342" height="438">
+  <br clear="left"/>
+</img>
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">Now
+put the following in your source file:</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt"><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">#include</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#a31515"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">&quot;aeffect.h&quot;
+</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">//include
+the special header file</font></font></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">#include</span></span></font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#a31515"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">&lt;stdlib.h&gt;
+</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">//for
+malloc used later</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">extern</span></span></font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#a31515"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">&quot;C&quot;</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+{ </font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">//the
+host expects symbol names not to be what&rsquo;s called &ldquo;mangled,&rdquo;
+and this helps with that if this is in a c++ file.</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">	</font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">audioMasterCallback</span></span></font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+hostCallback; </font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">//Declaring
+hostCallback &ndash; a function pointer to possibly call in the
+future to communicate with the host (explained in sections above).</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">	<font color="#468a1a">//The
+function definition for one of the function pointers set in AEffect
+</font><font color="#468a1a">(referenced later)</font></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">	</font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">VstIntPtr</span></span></font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#6f008a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">VSTCALLBACK</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+dispatcherProc(</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">AEffect</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">*
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">effect</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">,
+</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">VstInt32</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">opcode</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">,
+</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">VstInt32</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">index</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">,
+</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">VstIntPtr</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">value</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">,
+</font></font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">void</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">*
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">ptr</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">,
+</font></font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">float</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">opt</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">)
+{</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">		</font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">return</span></span></font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+0;</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">	</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">}</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">	<font color="#468a1a">//The
+function definition for one of the function pointers set in AEffect
+</font><font color="#468a1a">(referenced later)</font></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">	</font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">void</span></span></font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#6f008a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">VSTCALLBACK</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+setParameterProc(</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">AEffect</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">*
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">effect</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">,
+</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">VstInt32</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">index</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">,
+</font></font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">float</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">parameter</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">)
+{</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">	</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">}</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">	<font color="#468a1a">//The
+function definition for one of the function pointers set in AEffect
+</font><font color="#468a1a">(referenced later)</font></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">	</font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">float</span></span></font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#6f008a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">VSTCALLBACK</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+getParameterProc(</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">AEffect</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">*
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">effect</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">,
+</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">VstInt32</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">index</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">)
+{</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">		</font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">return</span></span></font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+0; </font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">//normally
+returns a parameter value</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">	</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">}</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">	<font color="#468a1a">//The
+function definition for one of the function pointers set in AEffect
+</font><font color="#468a1a">(referenced later)</font></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">	</font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">void</span></span></font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#6f008a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">VSTCALLBACK</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+processProc(</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">AEffect</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">*
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">effect</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">,
+</font></font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">float</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">**
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">inputs</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">,
+</font></font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">float</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">**
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">outputs</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">,
+</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">VstInt32</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">sampleFrames</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">)
+{</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">	</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">}</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">	<font color="#468a1a">//The
+function definition for one of the function pointers set in AEffect
+</font><font color="#468a1a">(referenced later)</font></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">	</font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">void</span></span></font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#6f008a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">VSTCALLBACK</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+processDoubleProc(</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">AEffect</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">*
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">effect</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">,
+</font></font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">double</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">**
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">inputs</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">,
+</font></font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">double</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">**
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">outputs</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">,
+</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">VstInt32</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">sampleFrames</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">)
+{</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">	</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">}</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">	</font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">AEffect</span></span></font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">*
+effectInstance; </font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">//Pointer
+to an instance of AEffect being declared so we can store it.</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">	<font color="#468a1a">//Our
+entry point </font><font color="#468a1a">has __declspec(dllexport)
+for windows</font></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">	</font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">__declspec</span></span></font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">(</font></font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">dllexport</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">)
+</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">AEffect</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">*
+VSTPluginMain(</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">audioMasterCallback</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">vstHostCallback</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">)
+{</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">		</font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">hostCallback
+= </span></span></font></font></font><font color="#808080"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">vstHostCallback</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">;
+</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">//Store
+the host callback function in th</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">e</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">hostCallback
+</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">function
+pointer near the top of the file </font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">for
+possible later use</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">		</font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance
+= (</span></span></font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">Aeffect</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">*)malloc(</font></font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">sizeof</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">(</font></font></font><font color="#2b91af"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">AEffect</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">));
+</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">//</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">Allocates
+size for us to store an instance of AEffect</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">		</font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;magic
+= </span></span></font></font></font><font color="#6f008a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">kEffectMagic</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">;
+</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">//</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">Setting
+the magic variable so the host knows this is a VST plugin</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		<font color="#468a1a">//</font><font color="#468a1a">The
+following block sets the function pointer variables for the function
+declarations above </font><font color="#468a1a">so the host can call
+them.</font></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;dispatcher
+= &amp;dispatcherProc;</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;setParameter
+= &amp;setParameterProc;</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;getParameter
+= &amp;getParameterProc;</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;processReplacing
+= &amp;processProc;</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;processDoubleReplacing
+= &amp;processDoubleProc;</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		<font color="#468a1a">//</font><font color="#468a1a">The
+following block sets some plugin variables</font></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;numPrograms
+= 0;</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;numParams
+= 1;</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;numInputs
+= 2;</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;numOutputs
+= 2;</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;flags
+= 0; </span></span></font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">//</span></span></font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">No
+flags here</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;initialDelay
+= 0;</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		<font color="#468a1a">//</font><font color="#468a1a">These
+can be NULL</font></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">		</font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;object
+= </span></span></font></font></font><font color="#6f008a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">NULL</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">;</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">		</font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;user
+= </span></span></font></font></font><font color="#6f008a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">NULL</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">;</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">		</font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;uniqueID
+= </span></span></font></font></font><font color="#a31515"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">'ABCD'</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">;
+</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">//</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">VST2
+plugins are (</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><i>supposed</i></font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal">
+</span></font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><i>to)</i></font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal">
+have ids registered with steinberg</span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">		</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">effectInstance-&gt;version
+= 1000;</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font face="0, serif"><font size="3" style="font-size: 12pt">		</font></font><font color="#0000ff"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">return</span></span></font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">
+effectInstance; </font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">//</font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">Return
+the AEffect instance </font></font></font><font color="#468a1a"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">to
+the host</font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt">	</font></font></font><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">}</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; line-height: 175%">
+
+</p>
+<p style="margin-bottom: 0in; line-height: 175%"><font color="#000000"><font face="Consolas, serif"><font size="2" style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">}</span></span></font></font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">Hopefully
+the comments clarify what&rsquo;s going on.</font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt">Build
+it by right clicking the project and pressing &ldquo;build&rdquo;
+(you don&rsquo;t want to try running it with the debugger, since
+we&rsquo;re not building an executable). You&rsquo;ll get an error.
+The error is caused by the fact that the string manipulation
+functions in <font face="Liberation Mono, monospace"><span style="text-decoration: none"><span style="background: #ffffa6">aeffect.h</span></span></font>
+are so old that they use functions which are unsafe. Since we aren&rsquo;t
+using these functions you can just delete them. Dele<font color="#000000">te
+the </font><font color="#000000"><b>vst_strncpy </b></font><font color="#000000">and
+</font><font color="#000000"><b>vst_strncat </b></font><font color="#000000">functions
+</font><font color="#000000">in </font><font color="#000000"><font face="Liberation Mono, monospace"><span style="text-decoration: none"><span style="background: #ffffa6">aeffect.h</span></span></font></font><font color="#000000">,
+</font><font color="#000000">and</font><font color="#000000"> </font><font color="#000000">it
+should build successfully. </font><font color="#000000">Also make
+sure that you&rsquo;re building in the correct </font><font color="#000000">platform
+</font><font color="#000000">architecture (most likely x64 for you</font><font color="#000000">r
+uses</font><font color="#000000">).</font></font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt"><font color="#000000">When
+u</font><font color="#000000">sing Visual Studio, my final DLL </font><font color="#000000">was</font><font color="#000000">
+in x64\Debug with the default project setup. </font><font color="#000000">Now
+that you have this DLL you can try scanning for it with your DAW, but
+there are many more efficient ways to test plugins:</font></font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+
+
+</p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt"><font color="#000000">VSTHost
+&ndash;  <a href="https://www.hermannseib.com/english/vsthost.htm">https://www.hermannseib.com/english/vsthost.htm</a></font></font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt"><font color="#000000">Savihost
+&ndash; <a href="https://www.hermannseib.com/english/savihost.htm">https://www.hermannseib.com/english/savihost.htm</a></font></font></font></p>
+<p style="margin-bottom: 0in; font-style: normal; font-weight: normal; line-height: 175%">
+<font face="Liberation Serif, serif"><font size="3" style="font-size: 13pt"><font color="#000000">MrsWatson
+&ndash; <a href="http://teragonaudio.com/MrsWatson">http://teragonaudio.com/MrsWatson</a>
+(Especially useful if your plugin doesn&rsquo;t open in a DAW or a
+host, since it&rsquo;s a CLI tool </font><font color="#000000">you
+can debug more easily</font><font color="#000000">)</font></font></font></p>
+</body>
+</html>
